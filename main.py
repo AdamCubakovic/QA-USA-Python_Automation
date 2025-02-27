@@ -5,7 +5,6 @@ import helpers
 from data import URBAN_ROUTES_URL
 from helpers import is_url_reachable
 
-
 class TestUrbanRoutes:
     @classmethod
     # Test to see if server is still running
@@ -13,10 +12,10 @@ class TestUrbanRoutes:
         if helpers.is_url_reachable(data.URBAN_ROUTES_URL):
         # Since is_url_reachable is boolean, this is asking if that function is True.
         # Simpler way of writing if function == True:
+
             print("Connected to the Urban Routes server.")
         else:
             print("Cannot connect to Urban Routes. Check the server is on and still running.")
-
 
     def test_set_route(self):
         #Add in S8
@@ -45,7 +44,7 @@ class TestUrbanRoutes:
 
     def test_order_blanket_and_handkerchiefs(self):
         # Add in S8
-        print("function created for order blanked and handkerchief")
+        print("function created for order blanket and handkerchiefs")
         pass
 
     def test_order_2_ice_creams(self):
