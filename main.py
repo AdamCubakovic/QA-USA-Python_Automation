@@ -2,8 +2,6 @@
 
 import data
 import helpers
-from data import URBAN_ROUTES_URL
-from helpers import is_url_reachable
 
 class TestUrbanRoutes:
     @classmethod
@@ -49,7 +47,7 @@ class TestUrbanRoutes:
 
     def test_order_2_ice_creams(self):
         # Add in S8
-        for i in range(0,1):
+        for i in range(2):
             # Add in S8
             pass
         print("function created for order 2 ice creams")
