@@ -33,18 +33,14 @@ class TestUrbanRoutes:
         print("function created for set route")
         pass
 
-    def test_select_plan(self):
+    def test_select_supportive_plan(self):
         self.driver.get(URBAN_ROUTES_URL)
         urban_routes_page = UrbanRoutesPage(self.driver)
         from_text = ADDRESS_FROM
         to_text = ADDRESS_TO
         urban_routes_page.enter_locations(from_text, to_text)
-        urban_routes_page.click_custom_option()
-        urban_routes_page.click_taxi_icon()
-        urban_routes_page.click_call_taxi()
-        urban_routes_page.click_supportive()
-        print("function created for select plan")
-        pass
+        urban_routes_page.select_supportive_plan()
+        urban_routes_page.get_supportive_class()
 
     def test_fill_phone_number(self):
         self.driver.get(URBAN_ROUTES_URL)
@@ -58,9 +54,13 @@ class TestUrbanRoutes:
 
 
     def test_fill_card(self):
-        # Add in S8
-        print("function created for fill card")
-        pass
+        self.driver.get(URBAN_ROUTES_URL)
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        from_text = ADDRESS_FROM
+        to_text = ADDRESS_TO
+        urban_routes_page.enter_locations(from_text, to_text)
+        urban_routes_page.click_call_taxi()
+        urban_routes_page.fill_card()
 
     def test_comment_for_driver(self):
         # Add in S8
