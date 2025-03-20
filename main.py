@@ -4,7 +4,7 @@ from selenium import webdriver
 
 import data
 import helpers
-from data import ADDRESS_TO, ADDRESS_FROM, URBAN_ROUTES_URL, PHONE_NUMBER
+from data import ADDRESS_TO, ADDRESS_FROM, URBAN_ROUTES_URL, PHONE_NUMBER, MESSAGE_FOR_DRIVER
 from pages import UrbanRoutesPage
 
 class TestUrbanRoutes:
@@ -30,8 +30,7 @@ class TestUrbanRoutes:
         from_text = ADDRESS_FROM
         to_text = ADDRESS_TO
         urban_routes_page.enter_locations(from_text, to_text)
-        print("function created for set route")
-        pass
+        assert ADDRESS_TO and ADDRESS_FROM in urban_routes_page.get_addresses_entered()
 
     def test_select_supportive_plan(self):
         self.driver.get(URBAN_ROUTES_URL)
@@ -41,6 +40,7 @@ class TestUrbanRoutes:
         urban_routes_page.enter_locations(from_text, to_text)
         urban_routes_page.select_supportive_plan()
         urban_routes_page.get_supportive_class()
+        assert urban_routes_page.get_supportive_class()
 
     def test_fill_phone_number(self):
         self.driver.get(URBAN_ROUTES_URL)
@@ -61,27 +61,51 @@ class TestUrbanRoutes:
         urban_routes_page.enter_locations(from_text, to_text)
         urban_routes_page.click_call_taxi()
         urban_routes_page.fill_card()
+        assert urban_routes_page.get_card_accepted()
 
     def test_comment_for_driver(self):
-        # Add in S8
-        print("function created for comment for driver")
-        pass
+        self.driver.get(URBAN_ROUTES_URL)
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        from_text = ADDRESS_FROM
+        to_text = ADDRESS_TO
+        urban_routes_page.enter_locations(from_text, to_text)
+        urban_routes_page.click_call_taxi()
+        urban_routes_page.comment_for_driver()
+        assert MESSAGE_FOR_DRIVER == urban_routes_page.get_driver_message()
 
     def test_order_blanket_and_handkerchiefs(self):
-        # Add in S8
-        print("function created for order blanket and handkerchiefs")
-        pass
+        self.driver.get(URBAN_ROUTES_URL)
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        from_text = ADDRESS_FROM
+        to_text = ADDRESS_TO
+        urban_routes_page.enter_locations(from_text, to_text)
+        urban_routes_page.select_supportive_plan()
+        urban_routes_page.order_blanket_and_handkerchiefs()
+        assert urban_routes_page.is_order_blanket_and_handkerchiefs_selected()
 
     def test_order_2_ice_creams(self):
-            # Add in S8
-        pass
-        print("function created for order 2 ice creams")
-        pass
+        self.driver.get(URBAN_ROUTES_URL)
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        from_text = ADDRESS_FROM
+        to_text = ADDRESS_TO
+        urban_routes_page.enter_locations(from_text, to_text)
+        urban_routes_page.select_supportive_plan()
+        urban_routes_page.order_2_ice_creams()
+        assert urban_routes_page.get_ice_creams_ordered()
 
     def test_car_search_model_appears(self):
-        # Add in S8
-        print("function created for car search model")
-        pass
+        self.driver.get(URBAN_ROUTES_URL)
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        from_text = ADDRESS_FROM
+        to_text = ADDRESS_TO
+        urban_routes_page.enter_locations(from_text, to_text)
+        urban_routes_page.select_supportive_plan()
+        urban_routes_page.get_supportive_class()
+        urban_routes_page.fill_phone_number()
+        urban_routes_page.fill_card()
+        urban_routes_page.comment_for_driver()
+        urban_routes_page.order_taxi()
+        assert urban_routes_page.get_order_complete()
 
     @classmethod
     def teardown_class(cls):

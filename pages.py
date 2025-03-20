@@ -4,6 +4,7 @@ from data import ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, CARD_NUMBER, CARD_CODE,
 import time
 import helpers
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
 
 
 class UrbanRoutesPage:
@@ -12,9 +13,8 @@ class UrbanRoutesPage:
     CUSTOM_OPTION_LOCATOR = (By.XPATH, '//div[text()="Custom"]')
     TAXI_ICON_LOCATOR = (By.XPATH, '//img[@src="/static/media/taxi-active.b0be3054.svg"]')
     CALL_TAXI_LOCATOR = (By.XPATH, '//button[contains(text(), "Call a taxi")]')
-    #SUPPORTIVE_LOCATOR = (By.XPATH, '//img[@src="/static/media/kids.27f92282.svg"]')
-    SUPPORTIVE_LOCATOR = (By.XPATH,  '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[1]/div[5]')
-    SUPPORTIVE_ACTIVE_LOCATOR = (By.XPATH, '//div[@class="tcard active"]')
+    SUPPORTIVE_LOCATOR = (By.XPATH, '//img[@src="/static/media/kids.27f92282.svg"]')
+    SUPPORTIVE_ACTIVE_LOCATOR = (By.XPATH, '//div[@class="tcard active"]//div[@class="tcard-title"]')
     PHONE_NUMBER_LOCATOR = (By.XPATH, '//div[@class="np-button"]')
     PHONE_NUMBER_MODAL = (By.XPATH, '//*[@id="phone"]')
     PHONE_NEXT_LOCATOR = (By.XPATH, '//button[normalize-space()="Next"]')
@@ -27,10 +27,15 @@ class UrbanRoutesPage:
     CARD_CODE_LOCATOR = (By.XPATH, '//input[@name="code"]')
     LINK_CARD_LOCATOR = (By. XPATH, '//button[normalize-space()="Link"]')
     CLOSE_PAYMENT_LOCATOR = (By. XPATH,'//div[@class="payment-picker open"]//div[@class="section active"]//button[@class="close-button section-close"]')
-    DRIVER_MESSAGE_LOCATOR = (By. XPATH, '//div[@class="form"]//div//div[@class="input-container"]')
-    BLANKET_HANDKERCHIEF_LOCATOR = (By. XPATH, '//div[text()= "Blanket and handkerchiefs"]//div[2]//span[@class = "slider round"]')
-    ADD_ICE_CREAM_LOCATOR = (By.XPATH, '//div[text()="Ice cream"]')
+    CARD_ACCEPTED_LOCATOR = (By.XPATH, '//div[contains(@class, "pp-value-text") and contains(text(), "Card")]')
+    DRIVER_MESSAGE_LOCATOR = (By. XPATH, '//input[@id="comment"]')
+    BLANKET_HANDKERCHIEF_LOCATOR = (By. XPATH, '//span[@class="slider round"]')
+    SLIDER_CHECKED_LOCATOR = (By.XPATH, '//input[@class="switch-input"]')
+    ADD_ICE_CREAM_LOCATOR = (By.XPATH, '//div[@class="counter-plus"]')
+    MAX_ICE_CREAM_LOCATOR = (By.XPATH, '//div[@class="counter-plus disabled"]')
     ORDER_BUTTON_LOCATOR = (By.XPATH, '//button[@class = "smart-button"]')
+    SEARCH_MODAL_LOCATOR = (By.XPATH, '//div[@class="order-body"]')
+    ORDER_COMPLETE_LOCATOR = (By.XPATH, '//div[@class="order-body"]')
 
     #methods
     def __init__(self, driver):
@@ -50,8 +55,12 @@ class UrbanRoutesPage:
         self.enter_from_location(from_text)
         self.enter_to_location(to_text)
 
+    def get_addresses_entered(self):
+        return self.driver.find_element(*self.FROM_LOCATOR).get_attribute("value"), self.driver.find_element(*self.TO_LOCATOR).get_attribute("value")
+
     def click_call_taxi(self):
         self.driver.find_element(*self.CALL_TAXI_LOCATOR).click()
+        time.sleep(1)
 
     def select_supportive_plan(self):
         self.driver.find_element(*self.CALL_TAXI_LOCATOR).click()
@@ -65,9 +74,7 @@ class UrbanRoutesPage:
             time.sleep(1)
 
     def get_supportive_class(self):
-        active_element = self.driver.find_element(*self.SUPPORTIVE_LOCATOR)
-        expected_class = "active"
-        assert expected_class in active_element.get_attribute("class"), "Supportive is not selected."
+        return self.driver.find_element(*self.SUPPORTIVE_ACTIVE_LOCATOR)
 
 
     def fill_phone_number(self):
@@ -100,19 +107,38 @@ class UrbanRoutesPage:
         time.sleep(1)
         self.driver.find_element(*self.CLOSE_PAYMENT_LOCATOR).click()
         time.sleep(1)
-        card_accepted = self.driver.find_element(By.XPATH, '//div[contains(@class, "pp-value-text") and contains(text(), "Card")]')
-        assert card_accepted
+
+    def get_card_accepted(self):
+        return self.driver.find_element(*self.CARD_ACCEPTED_LOCATOR)
 
     def comment_for_driver(self):
         message = MESSAGE_FOR_DRIVER
         self.driver.find_element(*self.DRIVER_MESSAGE_LOCATOR).send_keys(message)
+        time.sleep(1)
+        self.driver.find_element(*self.DRIVER_MESSAGE_LOCATOR).send_keys(Keys.TAB)
+        time.sleep(2)
+
+    def get_driver_message(self):
+        return self.driver.find_element(*self.DRIVER_MESSAGE_LOCATOR).get_attribute("value")
 
     def order_blanket_and_handkerchiefs(self):
         self.driver.find_element(*self.BLANKET_HANDKERCHIEF_LOCATOR).click()
+        time.sleep(1)
+
+    def is_order_blanket_and_handkerchiefs_selected(self):
+        return self.driver.find_elements(*self.SLIDER_CHECKED_LOCATOR)[0].get_property('checked')
+        # find_elements returns array. [0] specifies first element in array. get_property finds out if it is checked
 
     def order_2_ice_creams(self):
         for i in range(2):
             self.driver.find_element(*self.ADD_ICE_CREAM_LOCATOR).click()
 
+    def get_ice_creams_ordered(self):
+        return self.driver.find_element(*self.MAX_ICE_CREAM_LOCATOR)
+
     def order_taxi(self):
         self.driver.find_element(*self.ORDER_BUTTON_LOCATOR).click()
+        time.sleep(21)
+
+    def get_order_complete(self):
+        return self.driver.find_element(*self.ORDER_COMPLETE_LOCATOR)
