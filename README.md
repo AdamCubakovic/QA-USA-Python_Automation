@@ -1,3 +1,5 @@
+See main.py and pages.py
+
 Code Naming Guidlines
 
 - Variable names are written in snake_case and are descriptive of their purpose.
